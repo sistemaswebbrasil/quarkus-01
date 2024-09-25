@@ -26,7 +26,7 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 public class CalendarResource {
 
     @GET
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON) 
     @Operation(summary = "Obter todos os eventos", description = "Retorna uma lista de todos os eventos de calendário")
     @APIResponse(
         responseCode = "200",
