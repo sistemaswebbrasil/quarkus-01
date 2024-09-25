@@ -1,5 +1,6 @@
 package br.com.siswbrasil.resource;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -35,6 +36,39 @@ public class CalendarResource {
     public List<CalendarEvent> getAllEvents() {
         return CalendarEvent.listAll();
     }
+
+    @GET
+    @Path("/filter")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(summary = "Filtrar eventos por data", description = "Retorna uma lista de eventos de calendário filtrados pela data inicial e final no formato yyyy-MM-dd")
+    @APIResponse(
+        responseCode = "200",
+        description = "Lista de eventos de calendário filtrados",
+        content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = CalendarEvent.class))
+    )
+    @APIResponse(
+        responseCode = "400",
+        description = "Parâmetros de data inválidos"
+    )
+    public Response getEventsByDateRange(@QueryParam("startDate") String startDateStr, @QueryParam("endDate") String endDateStr) {
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            LocalDate startDate = LocalDate.parse(startDateStr, formatter);
+            LocalDate endDate = LocalDate.parse(endDateStr, formatter);
+
+            List<CalendarEvent> events = CalendarEvent.<CalendarEvent>streamAll()
+                .filter(event -> {
+                    LocalDate eventDate = event.start.toLocalDate();
+                    return (eventDate.isEqual(startDate) || eventDate.isAfter(startDate)) &&
+                           (eventDate.isEqual(endDate) || eventDate.isBefore(endDate));
+                })
+                .collect(Collectors.toList());
+
+            return Response.ok(events).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Parâmetros de data inválidos").build();
+        }
+    }    
 
     @GET
     @Path("/{id}")
