@@ -1,0 +1,220 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: '4'
+    image.openshift.io/triggers: '[{"from":{"kind":"ImageStreamTag","name":"ubi-quarkus-native-s2i:21.3.0-java11","namespace":"sistemaswebbrasil-dev"},"fieldPath":"spec.template.spec.containers[?(@.name==\"quarkus-01\")].image","paused":"true"}]'
+    openshift.io/generated-by: OpenShiftNewApp
+  resourceVersion: '4950725200'
+  name: quarkus-01
+  uid: b47d837f-14dd-4e8e-bd28-7cb2724021c9
+  creationTimestamp: '2024-09-24T22:51:16Z'
+  generation: 4
+  managedFields:
+    - manager: oc
+      operation: Update
+      apiVersion: apps/v1
+      time: '2024-09-24T22:51:16Z'
+      fieldsType: FieldsV1
+      fieldsV1:
+        'f:metadata':
+          'f:annotations':
+            .: {}
+            'f:openshift.io/generated-by': {}
+          'f:labels':
+            .: {}
+            'f:app': {}
+            'f:app.kubernetes.io/component': {}
+            'f:app.kubernetes.io/instance': {}
+        'f:spec':
+          'f:progressDeadlineSeconds': {}
+          'f:replicas': {}
+          'f:revisionHistoryLimit': {}
+          'f:selector': {}
+          'f:strategy':
+            'f:rollingUpdate':
+              .: {}
+              'f:maxSurge': {}
+              'f:maxUnavailable': {}
+            'f:type': {}
+          'f:template':
+            'f:metadata':
+              'f:annotations':
+                .: {}
+                'f:openshift.io/generated-by': {}
+              'f:labels':
+                .: {}
+                'f:deployment': {}
+            'f:spec':
+              'f:containers':
+                'k:{"name":"quarkus-01"}':
+                  .: {}
+                  'f:imagePullPolicy': {}
+                  'f:name': {}
+                  'f:ports':
+                    .: {}
+                    'k:{"containerPort":8080,"protocol":"TCP"}':
+                      .: {}
+                      'f:containerPort': {}
+                      'f:protocol': {}
+                  'f:resources': {}
+                  'f:terminationMessagePath': {}
+                  'f:terminationMessagePolicy': {}
+              'f:dnsPolicy': {}
+              'f:restartPolicy': {}
+              'f:schedulerName': {}
+              'f:securityContext': {}
+              'f:terminationGracePeriodSeconds': {}
+    - manager: Mozilla
+      operation: Update
+      apiVersion: apps/v1
+      time: '2024-09-24T23:47:11Z'
+      fieldsType: FieldsV1
+      fieldsV1:
+        'f:metadata':
+          'f:annotations':
+            'f:image.openshift.io/triggers': {}
+        'f:spec':
+          'f:template':
+            'f:spec':
+              'f:containers':
+                'k:{"name":"quarkus-01"}':
+                  'f:env':
+                    .: {}
+                    'k:{"name":"QUARKUS_DATASOURCE_DB_KIND"}':
+                      .: {}
+                      'f:name': {}
+                      'f:value': {}
+                    'k:{"name":"QUARKUS_DATASOURCE_JDBC_DRIVER"}':
+                      .: {}
+                      'f:name': {}
+                      'f:value': {}
+                    'k:{"name":"QUARKUS_DATASOURCE_JDBC_URL"}':
+                      .: {}
+                      'f:name': {}
+                      'f:value': {}
+                    'k:{"name":"QUARKUS_DATASOURCE_PASSWORD"}':
+                      .: {}
+                      'f:name': {}
+                      'f:value': {}
+                    'k:{"name":"QUARKUS_DATASOURCE_USERNAME"}':
+                      .: {}
+                      'f:name': {}
+                      'f:value': {}
+                    'k:{"name":"QUARKUS_HIBERNATE_ORM_DATABASE_GENERATION"}':
+                      .: {}
+                      'f:name': {}
+                      'f:value': {}
+                    'k:{"name":"QUARKUS_HIBERNATE_ORM_LOG_SQL"}':
+                      .: {}
+                      'f:name': {}
+                      'f:value': {}
+                  'f:image': {}
+    - manager: kube-controller-manager
+      operation: Update
+      apiVersion: apps/v1
+      time: '2024-09-24T23:47:14Z'
+      fieldsType: FieldsV1
+      fieldsV1:
+        'f:metadata':
+          'f:annotations':
+            'f:deployment.kubernetes.io/revision': {}
+        'f:status':
+          'f:availableReplicas': {}
+          'f:conditions':
+            .: {}
+            'k:{"type":"Available"}':
+              .: {}
+              'f:lastTransitionTime': {}
+              'f:lastUpdateTime': {}
+              'f:message': {}
+              'f:reason': {}
+              'f:status': {}
+              'f:type': {}
+            'k:{"type":"Progressing"}':
+              .: {}
+              'f:lastTransitionTime': {}
+              'f:lastUpdateTime': {}
+              'f:message': {}
+              'f:reason': {}
+              'f:status': {}
+              'f:type': {}
+          'f:observedGeneration': {}
+          'f:readyReplicas': {}
+          'f:replicas': {}
+          'f:updatedReplicas': {}
+      subresource: status
+  namespace: sistemaswebbrasil-dev
+  labels:
+    app: quarkus-01
+    app.kubernetes.io/component: quarkus-01
+    app.kubernetes.io/instance: quarkus-01
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      deployment: quarkus-01
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        deployment: quarkus-01
+      annotations:
+        openshift.io/generated-by: OpenShiftNewApp
+    spec:
+      containers:
+        - name: quarkus-01
+          image: 'adrianofariaalves/quarkus-01-jvm:latest'
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          env:
+            - name: QUARKUS_DATASOURCE_DB_KIND
+              value: h2
+            - name: QUARKUS_DATASOURCE_JDBC_URL
+              value: 'jdbc:h2:mem:test;DB_CLOSE_DELAY=-1'
+            - name: QUARKUS_DATASOURCE_USERNAME
+              value: sa
+            - name: QUARKUS_DATASOURCE_PASSWORD
+              value: sa
+            - name: QUARKUS_DATASOURCE_JDBC_DRIVER
+              value: org.h2.Driver
+            - name: QUARKUS_HIBERNATE_ORM_DATABASE_GENERATION
+              value: drop-and-create
+            - name: QUARKUS_HIBERNATE_ORM_LOG_SQL
+              value: 'true'
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: IfNotPresent
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      securityContext: {}
+      schedulerName: default-scheduler
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
+  revisionHistoryLimit: 10
+  progressDeadlineSeconds: 600
+status:
+  observedGeneration: 4
+  replicas: 1
+  updatedReplicas: 1
+  readyReplicas: 1
+  availableReplicas: 1
+  conditions:
+    - type: Available
+      status: 'True'
+      lastUpdateTime: '2024-09-24T23:47:14Z'
+      lastTransitionTime: '2024-09-24T23:47:14Z'
+      reason: MinimumReplicasAvailable
+      message: Deployment has minimum availability.
+    - type: Progressing
+      status: 'True'
+      lastUpdateTime: '2024-09-24T23:47:14Z'
+      lastTransitionTime: '2024-09-24T23:31:41Z'
+      reason: NewReplicaSetAvailable
+      message: ReplicaSet "quarkus-01-76cdcdcf68" has successfully progressed.
