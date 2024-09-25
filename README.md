@@ -81,3 +81,6 @@ EOF
 kubectl expose deployment quarkus-01-deploy --port=8080 
 oc expose svc quarkus-01-deploy
 ```
+
+endereço no openshift:
+http://quarkus-01-deploy-sistemaswebbrasil-dev.apps.sandbox-m2.ll9k.p1.openshiftapps.com/hello
