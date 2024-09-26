@@ -2,12 +2,12 @@
 
 ## Gerar imagem 
 ```bash
-docker build -f src/main/docker/Dockerfile.jvm -t adrianofariaalves/quarkus-01-jvm .
+docker build -f src/main/docker/Dockerfile.jvm -t adrianofariaalves/quarkus-01-jvm:0.0.2 .
 ```
 
 ## Push imagem
 ```bash
-docker push adrianofariaalves/quarkus-01-jvm
+docker push adrianofariaalves/quarkus-01-jvm:0.0.2
 ```
 
 ## Criando o pod?
@@ -68,10 +68,25 @@ spec:
     spec:
       containers:
       - name: quarkus-01
-        image: adrianofariaalves/quarkus-01-jvm:latest
+        image: adrianofariaalves/quarkus-01-jvm:0.0.1
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
+        env:
+          - name: QUARKUS_DATASOURCE_DB_KIND
+            value: h2
+          - name: QUARKUS_DATASOURCE_JDBC_URL
+            value: 'jdbc:h2:mem:test;DB_CLOSE_DELAY=-1'
+          - name: QUARKUS_DATASOURCE_USERNAME
+            value: sa
+          - name: QUARKUS_DATASOURCE_PASSWORD
+            value: sa
+          - name: QUARKUS_DATASOURCE_JDBC_DRIVER
+            value: org.h2.Driver
+          - name: QUARKUS_HIBERNATE_ORM_DATABASE_GENERATION
+            value: drop-and-create
+          - name: QUARKUS_HIBERNATE_ORM_LOG_SQL
+            value: 'true'
 EOF
 ```
 
