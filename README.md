@@ -2,12 +2,12 @@
 
 ## Gerar imagem 
 ```bash
-docker build -f src/main/docker/Dockerfile.jvm -t adrianofariaalves/quarkus-01-jvm:0.0.2 .
+docker build -f src/main/docker/Dockerfile.jvm -t adrianofariaalves/quarkus-01-jvm:latest .
 ```
 
 ## Push imagem
 ```bash
-docker push adrianofariaalves/quarkus-01-jvm:0.0.2
+docker push adrianofariaalves/quarkus-01-jvm:latest
 ```
 
 ## Criando o pod?
@@ -50,7 +50,7 @@ EOF
 
 ## criando deployment??
 ```bash
-cat <<EOF | kubectl apply -f -
+mvn versions:set -DnextSnapshot=true && mvn package && docker build -f src/main/docker/Dockerfile.jvm -t adrianofariaalves/quarkus-01-jvm:latest . && docker push adrianofariaalves/quarkus-01-jvm:latest && cat <<EOF | kubectl apply -f -
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -68,7 +68,7 @@ spec:
     spec:
       containers:
       - name: quarkus-01
-        image: adrianofariaalves/quarkus-01-jvm:0.0.1
+        image: adrianofariaalves/quarkus-01-jvm:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
