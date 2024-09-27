@@ -1,5 +1,12 @@
 package br.com.siswbrasil;
 
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
+
 import br.com.siswbrasil.model.CalendarEvent;
 import br.com.siswbrasil.model.ExtendedProps;
 import br.com.siswbrasil.model.Guest;
@@ -7,13 +14,6 @@ import io.quarkus.runtime.StartupEvent;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
 import jakarta.transaction.Transactional;
-
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
 
 /**
  * Classe responsável por inicializar dados de exemplo na inicialização da aplicação.
@@ -56,7 +56,7 @@ public class DataInitializer {
             CalendarEvent event = new CalendarEvent();
             event.title = getRandomElement(TITLES);
             event.start = getRandomDateTime();
-            event.endDate = null;
+            event.endDate = getRandomDateTime().plusDays(1);
             event.allDay = random.nextBoolean();
             event.url = "";
 

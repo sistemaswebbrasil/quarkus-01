@@ -3,20 +3,27 @@ package br.com.siswbrasil.model;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToOne;
 
 @Entity
+@JsonPropertyOrder({ "id", "title", "start", "end", "allDay", "url", "extendedProps" })
 public class CalendarEvent extends PanacheEntity {
 
     public String title;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
     public LocalDateTime start;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
-    public LocalDateTime endDate; // Renomeado de 'end' para 'endDate'
+
+    @JsonProperty("end")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+    public LocalDateTime endDate; 
+    
     public boolean allDay;
+
     public String url;
   
     @OneToOne
