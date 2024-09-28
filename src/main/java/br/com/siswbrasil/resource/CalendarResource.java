@@ -161,7 +161,6 @@ public class CalendarResource {
         ]
             """;
             return CalendarEvent.listAll();
- 
     }
 
     @GET
