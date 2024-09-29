@@ -1,7 +1,7 @@
 package br.com.siswbrasil.resource;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -10,14 +10,18 @@ import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.ExampleObject;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
+import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import br.com.siswbrasil.dto.CalendarEventDTO;
 import br.com.siswbrasil.model.CalendarEvent;
 import br.com.siswbrasil.model.ExtendedProps;
 import br.com.siswbrasil.model.Guest;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -34,6 +38,9 @@ import jakarta.ws.rs.core.Response;
 @Tag(name = "Calendar", description = "Operações relacionadas a eventos de calendário")
 public class CalendarResource {
 
+    private static final Logger logger = LoggerFactory.getLogger(CalendarResource.class);
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+
     @GET
     @Produces(MediaType.APPLICATION_JSON) 
     @Operation(summary = "Obter todos os eventos", description = "Retorna uma lista de todos os eventos de calendário")
@@ -43,124 +50,7 @@ public class CalendarResource {
         content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = CalendarEvent.class))
     )
     public List<CalendarEvent> getAllEvents() {
-        //return CalendarEvent.listAll();
-    String json = """
-        
-        
-        [
-            {
-                "id": 1,
-                "url": "",
-                "title": "Design Review",
-                "start": "2024-09-27T13:50:30.996Z",
-                "end": "2024-09-28T13:50:30.996Z",
-                "allDay": false,
-                "extendedProps": {
-                    "calendar": "Business"
-                }
-            },
-            {
-                "id": 2,
-                "url": "",
-                "title": "Meeting With Client",
-                "start": "2024-09-19T03:00:00.000Z",
-                "end": "2024-09-20T03:00:00.000Z",
-                "allDay": true,
-                "extendedProps": {
-                    "calendar": "Business"
-                }
-            },
-            {
-                "id": 3,
-                "url": "",
-                "title": "Family Trip",
-                "allDay": true,
-                "start": "2024-09-21T03:00:00.000Z",
-                "end": "2024-09-23T03:00:00.000Z",
-                "extendedProps": {
-                    "calendar": "Holiday"
-                }
-            },
-            {
-                "id": 4,
-                "url": "",
-                "title": "Doctor's Appointment",
-                "start": "2024-09-19T03:00:00.000Z",
-                "end": "2024-09-20T03:00:00.000Z",
-                "allDay": true,
-                "extendedProps": {
-                    "calendar": "Personal"
-                }
-            },
-            {
-                "id": 5,
-                "url": "",
-                "title": "Dart Game?",
-                "start": "2024-09-17T03:00:00.000Z",
-                "end": "2024-09-18T03:00:00.000Z",
-                "allDay": true,
-                "extendedProps": {
-                    "calendar": "ETC"
-                }
-            },
-            {
-                "id": 6,
-                "url": "",
-                "title": "Meditation",
-                "start": "2024-09-17T03:00:00.000Z",
-                "end": "2024-09-18T03:00:00.000Z",
-                "allDay": true,
-                "extendedProps": {
-                    "calendar": "Personal"
-                }
-            },
-            {
-                "id": 7,
-                "url": "",
-                "title": "Dinner",
-                "start": "2024-09-17T03:00:00.000Z",
-                "end": "2024-09-18T03:00:00.000Z",
-                "allDay": true,
-                "extendedProps": {
-                    "calendar": "Family"
-                }
-            },
-            {
-                "id": 8,
-                "url": "",
-                "title": "Product Review",
-                "start": "2024-09-17T03:00:00.000Z",
-                "end": "2024-09-18T03:00:00.000Z",
-                "allDay": true,
-                "extendedProps": {
-                    "calendar": "Business"
-                }
-            },
-            {
-                "id": 9,
-                "url": "",
-                "title": "Monthly Meeting",
-                "start": "2024-10-01T03:00:00.000Z",
-                "end": "2024-10-01T03:00:00.000Z",
-                "allDay": true,
-                "extendedProps": {
-                    "calendar": "Business"
-                }
-            },
-            {
-                "id": 10,
-                "url": "",
-                "title": "Monthly Checkup",
-                "start": "2024-08-01T03:00:00.000Z",
-                "end": "2024-08-01T03:00:00.000Z",
-                "allDay": true,
-                "extendedProps": {
-                    "calendar": "Personal"
-                }
-            }
-        ]
-            """;
-            return CalendarEvent.listAll();
+            return CalendarEvent.listAll(); 
     }
 
     @GET
@@ -217,7 +107,7 @@ public class CalendarResource {
         return Response.ok(event).build();
     }
 
-    @POST
+@POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(summary = "Adicionar um novo evento", description = "Adiciona um novo evento ao calendário")
@@ -233,7 +123,7 @@ public class CalendarResource {
     )
     @Transactional
     public Response addEvent(
-        @org.eclipse.microprofile.openapi.annotations.parameters.RequestBody(
+        @RequestBody(
             description = "Dados do evento a ser criado",
             required = true,
             content = @Content(
@@ -241,14 +131,16 @@ public class CalendarResource {
                 schema = @Schema(implementation = CalendarEventDTO.class),
                 examples = @ExampleObject(
                     name = "Exemplo de Evento",
-                    value = "{ \"title\": \"Reunião de planejamento\", \"start\": \"2024-10-01 07:00\", \"end\": \"2024-10-01 08:00\", \"allDay\": false, \"url\": \"http://example.com/event\", \"extendedProps\": { \"guests\": [\"Jane Foster\", \"Sandy Vega\"], \"location\": \"Sala de Reuniões\", \"description\": \"Planejar as próximas etapas do projeto\", \"calendar\": \"Business\" } }"
+                    value = "{ \"title\": \"Reunião de planejamento\", \"start\": \"2024-10-01T07:00:00.000Z\", \"end\": \"2024-10-01T08:00:00.000Z\", \"allDay\": false, \"url\": \"http://example.com/event\", \"extendedProps\": { \"guests\": [\"Jane Foster\", \"Sandy Vega\"], \"location\": \"Sala de Reuniões\", \"description\": \"Planejar as próximas etapas do projeto\", \"calendar\": \"Business\" } }"
                 )
             )
-        ) CalendarEventDTO eventDTO) {
+        ) @Valid CalendarEventDTO eventDTO) {
+        logger.debug("Received eventDTO: {}", eventDTO);
+
         CalendarEvent event = new CalendarEvent();
         event.title = eventDTO.title;
-        event.start = LocalDateTime.parse(eventDTO.start, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
-        event.endDate = eventDTO.end != null ? LocalDateTime.parse(eventDTO.end, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")) : null;
+        event.start = OffsetDateTime.parse(eventDTO.start,FORMATTER); 
+        event.endDate = OffsetDateTime.parse(eventDTO.end,FORMATTER); 
         event.allDay = eventDTO.allDay;
         event.url = eventDTO.url;
 
@@ -303,8 +195,8 @@ public class CalendarResource {
         }
 
         event.title = eventDTO.title;
-        event.start = LocalDateTime.parse(eventDTO.start, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
-        event.endDate = eventDTO.end != null ? LocalDateTime.parse(eventDTO.end, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")) : null;
+        event.start = OffsetDateTime.parse(eventDTO.start,FORMATTER); 
+        event.endDate = OffsetDateTime.parse(eventDTO.end,FORMATTER); 
         event.allDay = eventDTO.allDay;
         event.url = eventDTO.url;
 

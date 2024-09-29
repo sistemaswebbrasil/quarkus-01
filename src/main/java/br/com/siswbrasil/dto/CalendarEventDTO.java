@@ -1,9 +1,12 @@
 package br.com.siswbrasil.dto;
 
-import org.eclipse.microprofile.openapi.annotations.media.Schema;
-import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
-
 import java.util.List;
+
+import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+
+import jakarta.validation.constraints.NotNull;
+import br.com.siswbrasil.validation.ValidDateFormat;
 
 @Schema(description = "DTO para representar um evento de calendário")
 public class CalendarEventDTO {
@@ -11,10 +14,14 @@ public class CalendarEventDTO {
     @Schema(description = "Título do evento", example = "Reunião de planejamento")
     public String title;
 
-    @Schema(description = "Data e hora de início do evento", example = "2024-10-01 07:00")
+    @Schema(description = "Data e hora de início do evento", example = "2024-10-01T07:00:00.000Z")
+    @NotNull(message = "Start date is required")
+    @ValidDateFormat
     public String start;
 
-    @Schema(description = "Data e hora de término do evento", example = "2024-10-01 08:00")
+    @Schema(description = "Data e hora de término do evento", example = "2024-10-01T08:00:00.000Z")
+    @NotNull(message = "End date is required")
+    @ValidDateFormat
     public String end;
 
     @Schema(description = "Indica se o evento dura o dia todo", example = "false")

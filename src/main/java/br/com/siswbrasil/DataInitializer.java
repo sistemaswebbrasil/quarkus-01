@@ -1,6 +1,7 @@
 package br.com.siswbrasil;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -97,11 +98,11 @@ public class DataInitializer {
      *
      * @return Data e hora aleatória.
      */
-    private LocalDateTime getRandomDateTime() {
+    private OffsetDateTime getRandomDateTime() {
         LocalDateTime now = LocalDateTime.now();
         int daysToAdd = random.nextInt(365);
         int hour = random.nextInt(24);
         int minute = random.nextInt(60);
-        return now.plusDays(daysToAdd).withHour(hour).withMinute(minute).withSecond(0).withNano(0);
+        return now.plusDays(daysToAdd).withHour(hour).withMinute(minute).withSecond(0).withNano(0).atOffset(OffsetDateTime.now().getOffset());
     }
 }
