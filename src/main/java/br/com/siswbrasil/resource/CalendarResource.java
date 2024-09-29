@@ -39,7 +39,7 @@ import jakarta.ws.rs.core.Response;
 public class CalendarResource {
 
     private static final Logger logger = LoggerFactory.getLogger(CalendarResource.class);
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 
     @GET
     @Produces(MediaType.APPLICATION_JSON) 
