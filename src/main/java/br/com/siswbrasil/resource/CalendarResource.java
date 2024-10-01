@@ -36,36 +36,20 @@ import jakarta.ws.rs.core.Response;
 
 @Path("/apps/calendar")
 @Tag(name = "Calendar", description = "Operações relacionadas a eventos de calendário")
-public class CalendarResource {
+public class CalendarResource implements CalendarResourceDoc {
 
     private static final Logger logger = LoggerFactory.getLogger(CalendarResource.class);
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 
     @GET
-    @Produces(MediaType.APPLICATION_JSON) 
-    @Operation(summary = "Obter todos os eventos", description = "Retorna uma lista de todos os eventos de calendário")
-    @APIResponse(
-        responseCode = "200",
-        description = "Lista de eventos de calendário",
-        content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = CalendarEvent.class))
-    )
+    @Override
     public List<CalendarEvent> getAllEvents() {
-            return CalendarEvent.listAll(); 
+        return CalendarEvent.listAll();
     }
 
     @GET
     @Path("/filter")
-    @Produces(MediaType.APPLICATION_JSON)
-    @Operation(summary = "Filtrar eventos por data", description = "Retorna uma lista de eventos de calendário filtrados pela data inicial e final no formato yyyy-MM-dd")
-    @APIResponse(
-        responseCode = "200",
-        description = "Lista de eventos de calendário filtrados",
-        content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = CalendarEvent.class))
-    )
-    @APIResponse(
-        responseCode = "400",
-        description = "Parâmetros de data inválidos"
-    )
+    @Override
     public Response getEventsByDateRange(@QueryParam("startDate") String startDateStr, @QueryParam("endDate") String endDateStr) {
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -73,32 +57,22 @@ public class CalendarResource {
             LocalDate endDate = LocalDate.parse(endDateStr, formatter);
 
             List<CalendarEvent> events = CalendarEvent.<CalendarEvent>streamAll()
-                .filter(event -> {
-                    LocalDate eventDate = event.start.toLocalDate();
-                    return (eventDate.isEqual(startDate) || eventDate.isAfter(startDate)) &&
-                           (eventDate.isEqual(endDate) || eventDate.isBefore(endDate));
-                })
-                .collect(Collectors.toList());
+                    .filter(event -> {
+                        LocalDate eventDate = event.start.toLocalDate();
+                        return (eventDate.isEqual(startDate) || eventDate.isAfter(startDate)) &&
+                                (eventDate.isEqual(endDate) || eventDate.isBefore(endDate));
+                    })
+                    .collect(Collectors.toList());
 
             return Response.ok(events).build();
         } catch (Exception e) {
             return Response.status(Response.Status.BAD_REQUEST).entity("Parâmetros de data inválidos").build();
         }
-    }    
+    }
 
     @GET
     @Path("/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
-    @Operation(summary = "Obter evento por ID", description = "Retorna um evento de calendário pelo ID")
-    @APIResponse(
-        responseCode = "200",
-        description = "Evento encontrado",
-        content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = CalendarEvent.class))
-    )
-    @APIResponse(
-        responseCode = "404",
-        description = "Evento não encontrado"
-    )
+    @Override
     public Response getEventById(@PathParam("id") Long id) {
         CalendarEvent event = CalendarEvent.findById(id);
         if (event == null) {
@@ -107,40 +81,17 @@ public class CalendarResource {
         return Response.ok(event).build();
     }
 
-@POST
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    @Operation(summary = "Adicionar um novo evento", description = "Adiciona um novo evento ao calendário")
-    @APIResponse(
-        responseCode = "201",
-        description = "Evento criado com sucesso",
-        content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = CalendarEvent.class))
-    )
-    @APIResponse(
-        responseCode = "400",
-        description = "Dados inválidos fornecidos",
-        content = @Content(mediaType = MediaType.APPLICATION_JSON)
-    )
+    @POST
+
     @Transactional
-    public Response addEvent(
-        @RequestBody(
-            description = "Dados do evento a ser criado",
-            required = true,
-            content = @Content(
-                mediaType = MediaType.APPLICATION_JSON,
-                schema = @Schema(implementation = CalendarEventDTO.class),
-                examples = @ExampleObject(
-                    name = "Exemplo de Evento",
-                    value = "{ \"title\": \"Reunião de planejamento\", \"start\": \"2024-10-01T07:00:00.000Z\", \"end\": \"2024-10-01T08:00:00.000Z\", \"allDay\": false, \"url\": \"http://example.com/event\", \"extendedProps\": { \"guests\": [\"Jane Foster\", \"Sandy Vega\"], \"location\": \"Sala de Reuniões\", \"description\": \"Planejar as próximas etapas do projeto\", \"calendar\": \"Business\" } }"
-                )
-            )
-        ) @Valid CalendarEventDTO eventDTO) {
+    @Override
+    public Response addEvent(@Valid CalendarEventDTO eventDTO) {
         logger.debug("Received eventDTO: {}", eventDTO);
 
         CalendarEvent event = new CalendarEvent();
         event.title = eventDTO.title;
-        event.start = OffsetDateTime.parse(eventDTO.start,FORMATTER); 
-        event.endDate = OffsetDateTime.parse(eventDTO.end,FORMATTER); 
+        event.start = OffsetDateTime.parse(eventDTO.start, FORMATTER);
+        event.endDate = OffsetDateTime.parse(eventDTO.end, FORMATTER);
         event.allDay = eventDTO.allDay;
         event.url = eventDTO.url;
 
@@ -175,19 +126,8 @@ public class CalendarResource {
 
     @PUT
     @Path("/{id}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    @Operation(summary = "Atualizar evento", description = "Atualiza um evento existente pelo ID")
-    @APIResponse(
-        responseCode = "200",
-        description = "Evento atualizado com sucesso",
-        content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = CalendarEvent.class))
-    )
-    @APIResponse(
-        responseCode = "404",
-        description = "Evento não encontrado"
-    )
     @Transactional
+    @Override
     public Response updateEvent(@PathParam("id") Long id, CalendarEventDTO eventDTO) {
         CalendarEvent event = CalendarEvent.findById(id);
         if (event == null) {
@@ -195,8 +135,8 @@ public class CalendarResource {
         }
 
         event.title = eventDTO.title;
-        event.start = OffsetDateTime.parse(eventDTO.start,FORMATTER); 
-        event.endDate = OffsetDateTime.parse(eventDTO.end,FORMATTER); 
+        event.start = OffsetDateTime.parse(eventDTO.start, FORMATTER);
+        event.endDate = OffsetDateTime.parse(eventDTO.end, FORMATTER);
         event.allDay = eventDTO.allDay;
         event.url = eventDTO.url;
 
@@ -231,17 +171,8 @@ public class CalendarResource {
 
     @DELETE
     @Path("/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
-    @Operation(summary = "Excluir evento", description = "Exclui um evento existente pelo ID")
-    @APIResponse(
-        responseCode = "204",
-        description = "Evento excluído com sucesso"
-    )
-    @APIResponse(
-        responseCode = "404",
-        description = "Evento não encontrado"
-    )
     @Transactional
+    @Override
     public Response deleteEvent(@PathParam("id") Long id) {
         CalendarEvent event = CalendarEvent.findById(id);
         if (event == null) {
