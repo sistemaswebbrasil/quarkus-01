@@ -3,6 +3,21 @@
 mvn versions:set -DnextSnapshot=true && mvn package && docker build -f src/main/docker/Dockerfile.jvm -t adrianofariaalves/quarkus-01-jvm:latest . && docker push adrianofariaalves/quarkus-01-jvm:latest && oc set image deployment/quarkus-01-deploy quarkus-01=adrianofariaalves/quarkus-01-jvm:latest && oc rollout restart deployment/quarkus-01-deploy
 ```
 
+## deploy direto openshift
+```bash
+mvn versions:set -DnextSnapshot=true && mvn install -Dquarkus.openshift.deploy=true
+```
+
+
+
+### Build e Deploy da Aplicação
+
+Para construir a aplicação, gerar a imagem Docker, fazer o push e atualizar no OpenShift, execute o seguinte comando:
+
+```bash
+mvn clean package -Dquarkus.container-image.build=true -Dquarkus.container-image.push=true -Dquarkus.kubernetes.deploy=true
+```
+
 ## criando deployment??
 ```bash
 mvn versions:set -DnextSnapshot=true && mvn package && docker build -f src/main/docker/Dockerfile.jvm -t adrianofariaalves/quarkus-01-jvm:latest . && docker push adrianofariaalves/quarkus-01-jvm:latest && cat <<EOF | kubectl apply -f -
