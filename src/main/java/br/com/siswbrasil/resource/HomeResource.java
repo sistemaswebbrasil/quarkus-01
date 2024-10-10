@@ -10,7 +10,7 @@ public class HomeResource {
     @GET
     public Response redirectToAbout() {
         return Response.status(Response.Status.FOUND)
-                       .location(java.net.URI.create("/about.html"))
+                       .location(java.net.URI.create("/about"))
                        .build();
     }
 }

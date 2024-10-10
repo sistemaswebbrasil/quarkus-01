@@ -1,26 +1,74 @@
-## gera imagem nova
+# Projeto de Estudos Quarkus com Kubernetes: quarkus-01
+
+Este projeto é um estudo de Quarkus integrado com Kubernetes, servindo como back-end para a aplicação Vue disponível em [https://escritorio-btun6w1sv-adriano-faria-alves-s-projects.vercel.app/](https://escritorio-btun6w1sv-adriano-faria-alves-s-projects.vercel.app/).
+
+Repositório do projeto: [https://github.com/sistemaswebbrasil/quarkus-01](https://github.com/sistemaswebbrasil/quarkus-01)
+
+## Guia de Implantação e Desenvolvimento do Projeto Quarkus
+
+Este guia fornece instruções detalhadas para compilar, implantar e gerenciar uma aplicação Quarkus no OpenShift, bem como informações importantes para o desenvolvimento.
+
+## Índice
+1. [Configuração do Ambiente](#configuração-do-ambiente)
+2. [Compilação e Implantação](#compilação-e-implantação)
+3. [Configurações do Projeto](#configurações-do-projeto)
+4. [Desenvolvimento](#desenvolvimento)
+5. [Gerenciamento de Cluster](#gerenciamento-de-cluster)
+6. [Recursos Adicionais](#recursos-adicionais)
+
+## Configuração do Ambiente
+
+### Pré-requisitos
+- JDK 21
+- Maven 3.8.1+
+- Docker
+- OpenShift CLI (oc)
+
+### Configuração do Banco de Dados
+O projeto utiliza MySQL. Certifique-se de ter um servidor MySQL disponível e atualize as configurações no `application.properties` conforme necessário.
+
+## Compilação e Implantação
+
+### Gerar Nova Imagem
+
+Para construir uma nova imagem, enviá-la para o Docker Hub e atualizar a implantação no OpenShift:
+
 ```bash
-mvn versions:set -DnextSnapshot=true && mvn package && docker build -f src/main/docker/Dockerfile.jvm -t adrianofariaalves/quarkus-01-jvm:latest . && docker push adrianofariaalves/quarkus-01-jvm:latest && oc set image deployment/quarkus-01-deploy quarkus-01=adrianofariaalves/quarkus-01-jvm:latest && oc rollout restart deployment/quarkus-01-deploy
+mvn versions:set -DnewVersion=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)-SNAPSHOT && \
+mvn package && \
+docker build -f Dockerfile.jvm -t adrianofariaalves/quarkus-01-jvm:latest . && \
+docker push adrianofariaalves/quarkus-01-jvm:latest && \
+oc set image deployment/quarkus-01-deploy quarkus-01=adrianofariaalves/quarkus-01-jvm:latest && \
+oc rollout restart deployment/quarkus-01-deploy
 ```
 
-## deploy direto openshift
+### Implantação Direta no OpenShift
+
+Para implantação direta no OpenShift:
+
 ```bash
-mvn versions:set -DnextSnapshot=true && mvn install -Dquarkus.openshift.deploy=true
+mvn versions:set -DnewVersion=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)-SNAPSHOT && \
+mvn install -Dquarkus.openshift.deploy=true
 ```
 
+### Compilar e Implantar Aplicação
 
-
-### Build e Deploy da Aplicação
-
-Para construir a aplicação, gerar a imagem Docker, fazer o push e atualizar no OpenShift, execute o seguinte comando:
+Para compilar a aplicação, gerar uma imagem Docker, enviá-la e atualizar o OpenShift:
 
 ```bash
 mvn clean package -Dquarkus.container-image.build=true -Dquarkus.container-image.push=true -Dquarkus.kubernetes.deploy=true
 ```
 
-## criando deployment??
+### Criando Implantação
+
+Para criar uma nova implantação no OpenShift:
+
 ```bash
-mvn versions:set -DnextSnapshot=true && mvn package && docker build -f src/main/docker/Dockerfile.jvm -t adrianofariaalves/quarkus-01-jvm:latest . && docker push adrianofariaalves/quarkus-01-jvm:latest && cat <<EOF | kubectl apply -f -
+mvn versions:set -DnewVersion=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)-SNAPSHOT && \
+mvn package && \
+docker build -f Dockerfile.jvm -t adrianofariaalves/quarkus-01-jvm:latest . && \
+docker push adrianofariaalves/quarkus-01-jvm:latest && \
+cat <<EOF | kubectl apply -f -
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -42,90 +90,127 @@ spec:
 EOF
 ```
 
-## Escalonamento do Cluster
-Você pode escalonar o número de balanceadores de carga, a capacidade de armazenamento persistente e a contagem de nós para o seu cluster OpenShift Dedicated a partir do OpenShift Cluster Manager.
+## Configurações do Projeto
 
-### Pré-requisitos
-- Você fez login no OpenShift Cluster Manager.
-- Você criou um cluster OpenShift Dedicated.
+### Propriedades Principais
+- **Versão do Quarkus**: 3.14.4
+- **Versão do Java**: 21
+- **Versão do Lombok**: 1.18.30
 
-### Procedimento
-Para escalonar o número de balanceadores de carga ou a capacidade de armazenamento persistente:
-1. Navegue até o OpenShift Cluster Manager e selecione seu cluster.
-2. Selecione "Edit load balancers and persistent storage" no menu de ações.
-3. Selecione o número de balanceadores de carga que deseja escalonar.
-4. Selecione a capacidade de armazenamento persistente que deseja escalonar.
-5. Clique em "Apply". O escalonamento ocorre automaticamente.
+### Dependências Principais
+- Quarkus REST
+- Hibernate ORM com Panache
+- MySQL Driver
+- OpenShift
+- Swagger UI
 
-Para escalonar a contagem de nós:
-1. Navegue até o OpenShift Cluster Manager e selecione seu cluster.
-2. Selecione "Edit node count" no menu de ações.
-3. Selecione um pool de máquinas.
-4. Selecione a contagem de nós por zona.
-5. Clique em "Apply". O escalonamento ocorre automaticamente.
+### Configurações de Banco de Dados
+```properties
+quarkus.datasource.db-kind=mysql
+quarkus.datasource.jdbc.url=jdbc:mysql://${db_host:localhost}:3306/${db_name:quarkus-01}?useSSL=false&serverTimezone=UTC
+quarkus.datasource.username=${db-username:adriano}
+quarkus.datasource.password=${db_password:adriano}
+```
 
-### Verificação
-Na aba "Overview" sob o cabeçalho "Details", você pode revisar a configuração do balanceador de carga, detalhes de armazenamento persistente e contagens de nós atual e desejada.
+### Configurações de CORS
+O CORS está habilitado para desenvolvimento local na porta 5173:
+```properties
+quarkus.http.cors=true
+quarkus.http.cors.origins=http://localhost:5173
+quarkus.http.cors.methods=GET,PUT,POST,DELETE,PATCH,OPTIONS
+quarkus.http.cors.headers=accept,authorization,content-type,x-requested-with
+```
 
-### Recursos Adicionais
-- Para informações sobre pools de máquinas, veja "About machine pools".
-- Para passos detalhados para habilitar a escalonamento automático para nós de computação no seu cluster, veja "About autoscaling nodes on a cluster".
+## Desenvolvimento
 
-## Revogação de Privilégios de Administrador
-Siga os passos nesta seção para revogar privilégios de administrador dedicado de um usuário.
+### Executando a Aplicação em Modo de Desenvolvimento
+```bash
+./mvnw compile quarkus:dev
+```
 
-### Pré-requisitos
-- Você fez login no OpenShift Cluster Manager.
-- Você criou um cluster OpenShift Dedicated.
-- Você configurou um provedor de identidade GitHub para seu cluster e adicionou um usuário do provedor de identidade.
-- Você concedeu privilégios de administrador dedicado a um usuário.
+### Acessando o Swagger UI
+O Swagger UI está sempre disponível em desenvolvimento:
+```
+http://localhost:8080/q/swagger-ui
+```
 
-### Procedimento
-1. Navegue até o OpenShift Cluster Manager e selecione seu cluster.
-2. Clique na aba "Access control".
-3. Na aba "Cluster Roles and Access", selecione o kebab ao lado de um usuário e clique em "Delete".
+### Formatação de Data e Hora
+As datas são formatadas como `yyyy-MM-dd HH:mm:ss` e o fuso horário padrão é UTC.
 
-### Verificação
-Após revogar os privilégios, o usuário não está mais listado como parte do grupo "dedicated-admins" sob "Access control → Cluster Roles and Access" na página do OpenShift Cluster Manager para seu cluster.
+## Gerenciamento de Cluster
 
-## Revogação de Acesso de Usuário
-Você pode revogar o acesso ao cluster de um usuário do provedor de identidade removendo-o do seu provedor de identidade configurado.
+### Escalonamento do Cluster
 
-### Pré-requisitos
-- Você tem um cluster OpenShift Dedicated.
-- Você tem uma conta de usuário GitHub.
-- Você configurou um provedor de identidade GitHub para seu cluster e adicionou um usuário do provedor de identidade.
+#### Pré-requisitos
+- Login no OpenShift Cluster Manager
+- Cluster OpenShift Dedicated criado
 
-### Procedimento
-1. Navegue até github.com e faça login na sua conta do GitHub.
-2. Remova o usuário da sua organização ou equipe do GitHub:
-   - Se sua configuração de provedor de identidade usa uma organização GitHub, siga os passos em "Removing a member from your organization" na documentação do GitHub.
-   - Se sua configuração de provedor de identidade usa uma equipe dentro de uma organização GitHub, siga os passos em "Removing organization members from a team" na documentação do GitHub.
+#### Procedimento
+1. Para escalar balanceadores de carga ou armazenamento persistente:
+   - Navegue até o OpenShift Cluster Manager e selecione seu cluster
+   - Selecione "Editar balanceadores de carga e armazenamento persistente" no menu de ações
+   - Escolha o número de balanceadores de carga e capacidade de armazenamento
+   - Clique em "Aplicar"
 
-### Verificação
-Após remover o usuário do seu provedor de identidade, o usuário não pode mais autenticar no cluster.
+2. Para escalar a contagem de nós:
+   - Selecione "Editar contagem de nós" no menu de ações
+   - Escolha um pool de máquinas e defina a contagem de nós por zona
+   - Clique em "Aplicar"
 
-## Exclusão de Cluster
-Você pode excluir seu cluster OpenShift Dedicated no Red Hat OpenShift Cluster Manager.
+#### Verificação
+Revise a configuração na aba "Visão geral" sob "Detalhes".
 
-### Pré-requisitos
-- Você fez login no OpenShift Cluster Manager.
-- Você criou um cluster OpenShift Dedicated.
+### Revogação de Privilégios de Administrador
 
-### Procedimento
-1. No OpenShift Cluster Manager, clique no cluster que deseja excluir.
-2. Selecione "Delete cluster" no menu de ações.
-3. Digite o nome do cluster destacado em negrito e clique em "Delete". A exclusão do cluster ocorre automaticamente.
+#### Pré-requisitos
+- Login no OpenShift Cluster Manager
+- Cluster OpenShift Dedicated criado
+- Provedor de identidade GitHub configurado e usuário adicionado
+- Privilégios de administrador dedicado concedidos a um usuário
 
-Se você excluir um cluster que foi instalado em um GCP Shared VPC, informe o proprietário do VPC do projeto host para remover as funções de política IAM concedidas à conta de serviço que foi referenciada durante a criação do cluster.
+#### Procedimento
+1. Navegue até o OpenShift Cluster Manager e selecione seu cluster
+2. Clique na aba "Controle de acesso"
+3. Em "Funções e Acesso do Cluster", selecione o menu kebab ao lado de um usuário e clique em "Excluir"
 
-### Próximos Passos
-- Adicionando serviços a um cluster usando o console do OpenShift Cluster Manager
-- Sobre pools de máquinas
-- Sobre escalonamento automático de nós em um cluster
-- Configurando a pilha de monitoramento
+#### Verificação
+O usuário não deve mais estar listado no grupo "dedicated-admins".
 
-### Recursos Adicionais
-- Para informações sobre as datas de fim de vida das versões do OpenShift Dedicated, veja "OpenShift Dedicated update life cycle".
-- Para mais informações sobre a implantação de clusters OpenShift Dedicated, veja "Creating a cluster on AWS" e "Creating a cluster on GCP".
-- Para documentação sobre a atualização do seu cluster, veja "OpenShift Dedicated cluster upgrades".
+### Revogação de Acesso de Usuário
+
+#### Pré-requisitos
+- Cluster OpenShift Dedicated
+- Conta de usuário GitHub
+- Provedor de identidade GitHub configurado para seu cluster
+
+#### Procedimento
+1. Faça login em sua conta do GitHub
+2. Remova o usuário de sua organização ou equipe do GitHub conforme apropriado
+
+#### Verificação
+O usuário não deve mais conseguir autenticar-se no cluster.
+
+### Exclusão de Cluster
+
+#### Pré-requisitos
+- Login no OpenShift Cluster Manager
+- Cluster OpenShift Dedicated criado
+
+#### Procedimento
+1. No OpenShift Cluster Manager, clique no cluster que deseja excluir
+2. Selecione "Excluir cluster" no menu de ações
+3. Digite o nome do cluster e clique em "Excluir"
+
+#### Observação
+Se estiver excluindo um cluster instalado em um GCP Shared VPC, informe o proprietário do VPC do projeto host para remover as funções de política IAM concedidas à conta de serviço referenciada durante a criação do cluster.
+
+## Recursos Adicionais
+- [Documentação do Quarkus](https://quarkus.io/guides/)
+- [Quarkus Cheat Sheet](https://lordofthejars.github.io/quarkus-cheat-sheet/)
+- [Hibernate ORM com Panache](https://quarkus.io/guides/hibernate-orm-panache)
+- [Implantação no OpenShift](https://quarkus.io/guides/deploying-to-openshift)
+- [Configurando CORS](https://quarkus.io/guides/http-reference#cors-filter)
+- [Ciclo de vida de atualização do OpenShift Dedicated](https://access.redhat.com/documentation/en-us/openshift_dedicated/4/html/introduction_to_openshift_dedicated/ded-life-cycle)
+- [Criando um cluster na AWS](https://access.redhat.com/documentation/en-us/openshift_dedicated/4/html/installing_accessing_and_deleting_openshift_dedicated_clusters/creating-a-cluster-on-aws)
+- [Criando um cluster no GCP](https://access.redhat.com/documentation/en-us/openshift_dedicated/4/html/installing_accessing_and_deleting_openshift_dedicated_clusters/creating-a-cluster-on-gcp)
+- [Atualizações de cluster do OpenShift Dedicated](https://access.redhat.com/documentation/en-us/openshift_dedicated/4/html/upgrading_openshift_dedicated_clusters/index)

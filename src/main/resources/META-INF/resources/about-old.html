@@ -77,19 +77,26 @@
     <header class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 border-bottom shadow-sm">
         <p class="h5 my-0 me-md-auto fw-normal">quarkus-01 <small class="text-muted">v${project.version}</small></p>
         <nav class="my-2 my-md-0 me-md-3">
-            <a class="btn btn-outline-light me-2" href="/q/swagger-ui/">
-            <i class="fas fa-file-alt"></i> Swagger UI
+            <a class="btn btn-outline-light me-2" href="/q/swagger-ui/" target="_blank">
+                <i class="fas fa-file-alt"></i> Swagger UI
             </a>
-            <a class="btn btn-outline-light" href="https://escritorio-wheat.vercel.app/#/">
-            <i class="fas fa-external-link-alt"></i> Front-end no Vercel
+            <!-- Link para Dev UI no modo dev -->
+            <a class="btn btn-outline-light me-2" href="http://localhost:8080/q/dev-ui/welcome" target="_blank" th:if="${quarkus.profile} == 'dev'">
+                <i class="fas fa-tools"></i> Dev UI
+            </a>
+            <a class="btn btn-outline-light" href="https://escritorio-wheat.vercel.app/#/" target="_blank">
+                <i class="fas fa-external-link-alt"></i> Front-end no Vercel
             </a>
         </nav>
+        <span class="badge text-bg-danger" th:if="${quarkus.profile} == 'dev'">Dev</span>
+        <span class="badge text-bg-success" th:if="${quarkus.profile} == 'prod'">Prod</span>
     </header>
 
     <main class="container mb-5">
+        <h1>teste2: ${quarkus.profile}</h1>
         <div class="pricing-header p-3 pb-md-4 mx-auto text-center">
             <h1 class="display-4 fw-normal">Sobre Este Projeto</h1>
-            <p class="fs-5 text-muted">Este é um projeto simples em Quarkus demonstrando como usar JAX-RS e Bootstrap.</p>
+            <p class="fs-5 text-muted">Este é um projeto de estudo em Quarkus demonstrando como usar JAX-RS, Hibernate ORM, MySQL, SmallRye Health, SmallRye Metrics e Bootstrap.</p>
         </div>
 
         <div class="row row-cols-1 row-cols-md-3 mb-3 text-center">
@@ -99,7 +106,7 @@
                         <h4 class="my-0 fw-normal">Resumo do Projeto</h4>
                     </div>
                     <div class="card-body">
-                        <p>Este projeto é uma aplicação Quarkus que usa JAX-RS para serviços web RESTful e Bootstrap para estilização. Ele se conecta a um banco de dados H2 em memória e usa Hibernate ORM para operações de banco de dados. A aplicação é conteinerizada usando Docker e implantada no Kubernetes/OpenShift.</p>
+                        <p>Este projeto é uma aplicação Quarkus que usa JAX-RS para serviços web RESTful e Bootstrap para estilização. Ele se conecta a um banco de dados MySQL e usa Hibernate ORM para operações de banco de dados. A aplicação é conteinerizada usando Docker e implantada no Kubernetes/OpenShift. Além disso, utiliza SmallRye Health e SmallRye Metrics para monitoramento.</p>
                     </div>
                 </div>
             </div>
@@ -112,11 +119,13 @@
                         <ul class="list-unstyled mt-3 mb-4">
                             <li><i class="fas fa-code library-icon"></i> Framework Quarkus</li>
                             <li><i class="fas fa-plug library-icon"></i> JAX-RS para APIs RESTful</li>
-                            <li><i class="fas fa-database library-icon"></i> Banco de dados H2 em memória</li>
+                            <li><i class="fas fa-database library-icon"></i> Banco de dados MySQL</li>
                             <li><i class="fas fa-cogs library-icon"></i> Hibernate ORM</li>
                             <li><i class="fas fa-file-alt library-icon"></i> Swagger UI para documentação da API</li>
                             <li><i class="fas fa-layer-group library-icon"></i> Docker para conteinerização</li>
                             <li><i class="fas fa-cloud library-icon"></i> Kubernetes/OpenShift para implantação</li>
+                            <li><i class="fas fa-heartbeat library-icon"></i> SmallRye Health para monitoramento de saúde</li>
+                            <li><i class="fas fa-chart-line library-icon"></i> SmallRye Metrics para monitoramento de métricas</li>
                         </ul>
                     </div>
                 </div>
@@ -128,18 +137,20 @@
                     </div>
                     <div class="card-body">
                         <ul class="list-unstyled mt-3 mb-4">
-                            <li><img src="images/quarkus.png" class="library-icon" alt="Quarkus"> quarkus-rest</li>
-                            <li><img src="images/quarkus.png" class="library-icon" alt="Quarkus"> quarkus-jdbc-h2</li>
-                            <li><img src="images/quarkus.png" class="library-icon" alt="Quarkus"> quarkus-smallrye-openapi</li>
-                            <li><img src="images/quarkus.png" class="library-icon" alt="Quarkus"> quarkus-rest-jackson</li>
-                            <li><img src="images/quarkus.png" class="library-icon" alt="Quarkus"> quarkus-hibernate-orm-panache</li>
-                            <li><img src="images/quarkus.png" class="library-icon" alt="Quarkus"> quarkus-arc</li>
-                            <li><img src="images/quarkus.png" class="library-icon" alt="Quarkus"> quarkus-hibernate-orm</li>
-                            <li><img src="images/quarkus.png" class="library-icon" alt="Quarkus"> quarkus-openshift</li>
-                            <li><img src="images/junit5.png" class="library-icon" alt="JUnit 5"> quarkus-junit5</li>
-                            <li><img src="images/rest-assured.png" class="library-icon" alt="Rest Assured"> rest-assured</li>
-                            <li><img src="images/jackson.png" class="library-icon" alt="Jackson Databind"> jackson-databind</li>
-                            <li><img src="images/h2.png" class="library-icon" alt="H2 Database"> h2</li>
+                            <li><img src="https://design.jboss.org/quarkus/logo/final/SVG/quarkus_icon_rgb_default.svg" class="library-icon" alt="Quarkus"> quarkus-rest</li>
+                            <li><img src="https://design.jboss.org/quarkus/logo/final/SVG/quarkus_icon_rgb_default.svg" class="library-icon" alt="Quarkus"> quarkus-jdbc-mysql</li>
+                            <li><img src="https://design.jboss.org/quarkus/logo/final/SVG/quarkus_icon_rgb_default.svg" class="library-icon" alt="Quarkus"> quarkus-smallrye-openapi</li>
+                            <li><img src="https://design.jboss.org/quarkus/logo/final/SVG/quarkus_icon_rgb_default.svg" class="library-icon" alt="Quarkus"> quarkus-rest-jackson</li>
+                            <li><img src="https://design.jboss.org/quarkus/logo/final/SVG/quarkus_icon_rgb_default.svg" class="library-icon" alt="Quarkus"> quarkus-hibernate-orm-panache</li>
+                            <li><img src="https://design.jboss.org/quarkus/logo/final/SVG/quarkus_icon_rgb_default.svg" class="library-icon" alt="Quarkus"> quarkus-arc</li>
+                            <li><img src="https://design.jboss.org/quarkus/logo/final/SVG/quarkus_icon_rgb_default.svg" class="library-icon" alt="Quarkus"> quarkus-hibernate-orm</li>
+                            <li><img src="https://design.jboss.org/quarkus/logo/final/SVG/quarkus_icon_rgb_default.svg" class="library-icon" alt="Quarkus"> quarkus-openshift</li>
+                            <li><img src="https://junit.org/junit5/assets/img/junit5-logo.png" class="library-icon" alt="JUnit 5"> quarkus-junit5</li>
+                            <li><img src="https://rest-assured.io/img/logo-transparent.png" class="library-icon" alt="Rest Assured"> rest-assured</li>
+                            <li><img src="https://raw.githubusercontent.com/FasterXML/jackson-docs/master/img/jackson-logo.png" class="library-icon" alt="Jackson Databind"> jackson-databind</li>
+                            <li><img src="https://www.mysql.com/common/logos/logo-mysql-170x115.png" class="library-icon" alt="MySQL"> mysql-connector-java</li>
+                            <li><img src="https://avatars.githubusercontent.com/u/43580159?s=200&v=4" class="library-icon" alt="SmallRye"> quarkus-smallrye-health</li>
+                            <li><img src="https://avatars.githubusercontent.com/u/43580159?s=200&v=4" class="library-icon" alt="SmallRye"> quarkus-smallrye-metrics</li>
                         </ul>
                     </div>
                 </div>
@@ -158,7 +169,7 @@
     <footer class="pt-3 border-top">
         <div class="row">
             <div class="col-12 col-md">
-                <small class="d-block mb-2 text-light">&copy; 2023 Seu Nome. Todos os direitos reservados.</small>
+                <small class="d-block mb-2 text-light">&copy; 2024 Adriano Faria Alves. Todos os direitos reservados.</small>
                 <small class="d-block text-light"><a href="https://github.com/Sistemas-Web-Brasil" target="_blank" class="text-light">sistemaswebbrasil</a></small>
             </div>
         </div>
