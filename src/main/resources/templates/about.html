@@ -1,22 +1,183 @@
-
 <!DOCTYPE html>
-
-<html lang="en">
-
+<html lang="pt-br">
 <head>
-
     <meta charset="UTF-8">
-
-    <title>About</title>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sobre</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        body {
+            background-color: #f0f0f0;
+            color: #333;
+        }
+        .library-icon {
+            width: 24px;
+            height: 24px;
+            margin-right: 8px;
+        }
+        footer {
+            padding: 10px 0;
+            background-color: #495057;
+            color: #f0f0f0;
+            text-align: center;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
+        .card-body {
+            text-align: left;
+        }
+        .card {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+            margin-bottom: 20px;
+        }
+        .card ul {
+            padding-left: 0;
+        }
+        .card ul li {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .card-header, .card-body {
+            text-align: left;
+        }
+        .card-body ul {
+            padding-left: 20px;
+        }
+        .card:nth-child(1) {
+            background-color: #e9ecef;
+        }
+        .card:nth-child(2) {
+            background-color: #dee2e6;
+        }
+        .card:nth-child(3) {
+            background-color: #ced4da;
+        }
+        .container {
+            padding-bottom: 60px; /* Espaço para o rodapé fixo */
+        }
+        header {
+            background-color: #6c757d;
+            color: #f0f0f0;
+        }
+        a {
+            color: #007bff;
+        }
+        a:hover {
+            color: #0056b3;
+        }
+    </style>
 </head>
-
 <body>
+    <header class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 border-bottom shadow-sm">
+        <p class="h5 my-0 me-md-auto fw-normal">{projectName} <small class="text-muted">v{projectVersion}</small> &nbsp;</p>
+        <nav class="my-2 my-md-0 me-md-3">
+            <a class="btn btn-outline-light me-2" href="/q/swagger-ui/" target="_blank">
+                <i class="fas fa-file-alt"></i> Swagger UI
+            </a>
+            <!-- Link para Dev UI no modo dev -->
+            {#if quarkusProfile == 'dev'}
+            <a class="btn btn-outline-light me-2" href="http://localhost:8080/q/dev-ui/welcome" target="_blank">
+                <i class="fas fa-tools"></i> Dev UI
+            </a>
+            {/if}
+            <a class="btn btn-outline-light" href="https://escritorio-wheat.vercel.app/#/" target="_blank">
+                <i class="fas fa-external-link-alt"></i> Front-end no Vercel
+            </a>
+        </nav>
+        {#if quarkusProfile == 'dev'}
+        <span class="badge text-bg-danger">Dev</span>
+        {/if}
+        {#if quarkusProfile == 'prod'}
+        <span class="badge text-bg-success">Prod</span>
+        {/if}
+    </header>
 
-    <h1>About Page</h1>
+    <main class="container mb-5">
+        <div class="pricing-header p-3 pb-md-4 mx-auto text-center">
+            <h1 class="display-4 fw-normal">Sobre Este Projeto</h1>
+            <p class="fs-5 text-muted">Este é um projeto de estudo em Quarkus demonstrando como usar JAX-RS, Hibernate ORM, MySQL, SmallRye Health, SmallRye Metrics e Bootstrap.</p>
+        </div>
 
-    <p>Quarkus Profile: {quarkusProfile}</p>
+        <div class="row row-cols-1 row-cols-md-3 mb-3 text-center">
+            <div class="col mb-4">
+                <div class="card rounded-3 shadow-sm">
+                    <div class="card-header py-3">
+                        <h4 class="my-0 fw-normal">Resumo do Projeto</h4>
+                    </div>
+                    <div class="card-body">
+                        <p>Este projeto é uma aplicação Quarkus que usa JAX-RS para serviços web RESTful e Bootstrap para estilização. Ele se conecta a um banco de dados MySQL e usa Hibernate ORM para operações de banco de dados. A aplicação é conteinerizada usando Docker e implantada no Kubernetes/OpenShift. Além disso, utiliza SmallRye Health e SmallRye Metrics para monitoramento.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col mb-4">
+                <div class="card rounded-3 shadow-sm">
+                    <div class="card-header py-3">
+                        <h4 class="my-0 fw-normal">Principais Funcionalidades</h4>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled mt-3 mb-4">
+                            <li><i class="fas fa-code library-icon"></i> Framework Quarkus</li>
+                            <li><i class="fas fa-plug library-icon"></i> JAX-RS para APIs RESTful</li>
+                            <li><i class="fas fa-database library-icon"></i> Banco de dados MySQL</li>
+                            <li><i class="fas fa-cogs library-icon"></i> Hibernate ORM</li>
+                            <li><i class="fas fa-file-alt library-icon"></i> Swagger UI para documentação da API</li>
+                            <li><i class="fas fa-layer-group library-icon"></i> Docker para conteinerização</li>
+                            <li><i class="fas fa-cloud library-icon"></i> Kubernetes/OpenShift para implantação</li>
+                            <li><i class="fas fa-heartbeat library-icon"></i> SmallRye Health para monitoramento de saúde</li>
+                            <li><i class="fas fa-chart-line library-icon"></i> SmallRye Metrics para monitoramento de métricas</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col mb-4">
+                <div class="card rounded-3 shadow-sm">
+                    <div class="card-header py-3">
+                        <h4 class="my-0 fw-normal">Bibliotecas Utilizadas</h4>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled mt-3 mb-4">
+                            <li><img src="https://design.jboss.org/quarkus/logo/final/SVG/quarkus_icon_rgb_default.svg" class="library-icon" alt="Quarkus"> quarkus-rest</li>
+                            <li><img src="https://design.jboss.org/quarkus/logo/final/SVG/quarkus_icon_rgb_default.svg" class="library-icon" alt="Quarkus"> quarkus-jdbc-mysql</li>
+                            <li><img src="https://design.jboss.org/quarkus/logo/final/SVG/quarkus_icon_rgb_default.svg" class="library-icon" alt="Quarkus"> quarkus-smallrye-openapi</li>
+                            <li><img src="https://design.jboss.org/quarkus/logo/final/SVG/quarkus_icon_rgb_default.svg" class="library-icon" alt="Quarkus"> quarkus-rest-jackson</li>
+                            <li><img src="https://design.jboss.org/quarkus/logo/final/SVG/quarkus_icon_rgb_default.svg" class="library-icon" alt="Quarkus"> quarkus-hibernate-orm-panache</li>
+                            <li><img src="https://design.jboss.org/quarkus/logo/final/SVG/quarkus_icon_rgb_default.svg" class="library-icon" alt="Quarkus"> quarkus-arc</li>
+                            <li><img src="https://design.jboss.org/quarkus/logo/final/SVG/quarkus_icon_rgb_default.svg" class="library-icon" alt="Quarkus"> quarkus-hibernate-orm</li>
+                            <li><img src="https://design.jboss.org/quarkus/logo/final/SVG/quarkus_icon_rgb_default.svg" class="library-icon" alt="Quarkus"> quarkus-openshift</li>
+                            <li><img src="https://junit.org/junit5/assets/img/junit5-logo.png" class="library-icon" alt="JUnit 5"> quarkus-junit5</li>
+                            <li><img src="https://rest-assured.io/img/logo-transparent.png" class="library-icon" alt="Rest Assured"> rest-assured</li>
+                            <li><img src="https://raw.githubusercontent.com/FasterXML/jackson-docs/master/img/jackson-logo.png" class="library-icon" alt="Jackson Databind"> jackson-databind</li>
+                            <li><img src="https://www.mysql.com/common/logos/logo-mysql-170x115.png" class="library-icon" alt="MySQL"> mysql-connector-java</li>
+                            <li><img src="https://avatars.githubusercontent.com/u/43580159?s=200&v=4" class="library-icon" alt="SmallRye"> quarkus-smallrye-health</li>
+                            <li><img src="https://avatars.githubusercontent.com/u/43580159?s=200&v=4" class="library-icon" alt="SmallRye"> quarkus-smallrye-metrics</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
 
+        <h2 class="mt-4">Links de Documentação</h2>
+        <ul class="list-group">
+            <li class="list-group-item"><a href="https://quarkus.io/guides/" target="_blank"><i class="fas fa-external-link-alt"></i> Documentação do Quarkus</a></li>
+            <li class="list-group-item"><a href="https://github.com/quarkusio/quarkus" target="_blank"><i class="fas fa-external-link-alt"></i> Repositório do Quarkus no GitHub</a></li>
+            <li class="list-group-item"><a href="https://swagger.io/docs/" target="_blank"><i class="fas fa-external-link-alt"></i> Documentação do Swagger</a></li>
+            <li class="list-group-item"><a href="https://github.com/sistemaswebbrasil/quarkus-01" target="_blank"><i class="fas fa-external-link-alt"></i> Código Fonte do Projeto</a></li>
+        </ul>
+    </main>
+
+    <footer class="pt-3 border-top">
+        <div class="row">
+            <div class="col-12 col-md">
+                <small class="d-block mb-2 text-light">&copy; 2024 Adriano Faria Alves. Todos os direitos reservados.</small>
+                <small class="d-block text-light"><a href="https://github.com/Sistemas-Web-Brasil" target="_blank" class="text-light">sistemaswebbrasil</a></small>
+            </div>
+        </div>
+    </footer>
 </body>
-
 </html>
