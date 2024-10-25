@@ -1,0 +1,94 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: quarkus-01-deploy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: quarkus-01
+  template:
+    metadata:
+      labels:
+        app: quarkus-01
+        env: dev
+    spec:
+      containers:
+      - name: quarkus-01
+        image: adrianofariaalves/quarkus-01-jvm:latest
+        ports:
+        - containerPort: 8080
+        env:
+        - name: QUARKUS_DATASOURCE_JDBC_URL
+          value: jdbc:mysql://mysql-service:3306/quarkus
+        - name: QUARKUS_DATASOURCE_USERNAME
+          value: quarkus
+        - name: QUARKUS_DATASOURCE_PASSWORD
+          value: quarkus
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: quarkus-01-service
+spec:
+  selector:
+    app: quarkus-01
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8080
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: quarkus-01-route
+spec:
+  to:
+    kind: Service
+    name: quarkus-01-service
+  port:
+    targetPort: 8080
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql-deploy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+      - name: mysql
+        image: mysql:8.0
+        ports:
+        - containerPort: 3306
+        env:
+        - name: MYSQL_DATABASE
+          value: quarkus
+        - name: MYSQL_USER
+          value: quarkus
+        - name: MYSQL_PASSWORD
+          value: quarkus
+        - name: MYSQL_ROOT_PASSWORD
+          value: root
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-service
+spec:
+  selector:
+    app: mysql
+  ports:
+  - protocol: TCP
+    port: 3306
+    targetPort: 3306

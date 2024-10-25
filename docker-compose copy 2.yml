@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    environment:
+      MYSQL_DATABASE: quarkus
+      MYSQL_USER: quarkus
+      MYSQL_PASSWORD: quarkus
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3307:3306"  
+    networks:
+      - quarkus-network
+
+  quarkus:
+    image: adrianofariaalves/quarkus-01-jvm:latest
+    container_name: quarkus-01
+    environment:
+      QUARKUS_DATASOURCE_JDBC_URL: jdbc:mysql://mysql:3306/quarkus
+      QUARKUS_DATASOURCE_USERNAME: quarkus
+      QUARKUS_DATASOURCE_PASSWORD: quarkus
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+    networks:
+      - quarkus-network
+
+networks:
+  quarkus-network:
+    driver: bridge

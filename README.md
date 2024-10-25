@@ -34,12 +34,7 @@ O projeto utiliza MySQL. Certifique-se de ter um servidor MySQL disponível e at
 Para construir uma nova imagem, enviá-la para o Docker Hub e atualizar a implantação no OpenShift:
 
 ```bash
-mvn versions:set -DnewVersion=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)-SNAPSHOT && \
-mvn package && \
-docker build -f Dockerfile.jvm -t adrianofariaalves/quarkus-01-jvm:latest . && \
-docker push adrianofariaalves/quarkus-01-jvm:latest && \
-oc set image deployment/quarkus-01-deploy quarkus-01=adrianofariaalves/quarkus-01-jvm:latest && \
-oc rollout restart deployment/quarkus-01-deploy
+mvn versions:set -DnextSnapshot=true && mvn package && docker build -f src/main/docker/Dockerfile.jvm -t adrianofariaalves/quarkus-01-jvm:latest . && docker push adrianofariaalves/quarkus-01-jvm:latest && oc set image deployment/quarkus-01-deploy quarkus-01=adrianofariaalves/quarkus-01-jvm:latest && oc rollout restart deployment/quarkus-01-deploy
 ```
 
 ### Implantação Direta no OpenShift

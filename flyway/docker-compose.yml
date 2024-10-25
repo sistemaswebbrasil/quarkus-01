@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: mysql
+    environment:
+      MYSQL_DATABASE: quarkus
+      MYSQL_USER: quarkus
+      MYSQL_PASSWORD: quarkus
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3307:3306"
+    networks:
+      - quarkus-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+      interval: 5s
+
+  wait:
+    image: willwill/wait-for-it
+    command: -t 60 mysql:3306
+    depends_on:
+      - db
+
+  migrations:
+    image: flyway/flyway
+    volumes:
+      - ./sql:/flyway/sql
+    environment:
+      - FLYWAY_URL=jdbc:mysql://mysql:3306/quarkus
+      - FLYWAY_USER=quarkus
+      - FLYWAY_PASSWORD=quarkus
+      - FLYWAY_VALIDATE_MIGRATION_NAMING=true
+    command: migrate
+    depends_on:
+      - wait
+
+  quarkus:
+    image: adrianofariaalves/quarkus-01-jvm:latest
+    container_name: quarkus-01
+    environment:
+      QUARKUS_DATASOURCE_JDBC_URL: jdbc:mysql://mysql:3306/quarkus
+      QUARKUS_DATASOURCE_USERNAME: quarkus
+      QUARKUS_DATASOURCE_PASSWORD: quarkus
+      QUARKUS_FLYWAY_MIGRATE_AT_START: "true"
+      QUARKUS_FLYWAY_BASELINE_ON_MIGRATE: "true"
+      QUARKUS_FLYWAY_BASELINE_VERSION: "0"
+    ports:
+      - "8080:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - quarkus-network
+
+networks:
+  quarkus-network:
+    driver: bridge
